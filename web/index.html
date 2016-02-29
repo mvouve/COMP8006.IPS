@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html ng-app="ipsApp">
+<head>
+  <script src="script/angular.min.js"></script>
+  <script src="script/ips.js"></script>
+  <title>Activity Monitor</title>
+</head>
+<body>
+  <h1>IPS Status Centre</h1>
+
+  <div ng-controller="HostListController as hostList" ng-model="currentHost">
+    <li ng-repeat="host in hostList.hosts()">
+      <a href ng-click="hostList.currentHost = host;">{{host}}</a>
+    </li>
+    <div>
+      <pre>Ban timeout:<span>{{hostList.currentBan(hostList.currentHost)}}</span></pre>
+      <h2>Recent Attempts</h2>
+      <li ng-repeat="event in hostList.events(hostList.currentHost)"><span>{{event}}</span></li>
+    </div>
+  </div>
+
+</body>

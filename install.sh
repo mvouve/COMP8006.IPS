@@ -1,6 +1,7 @@
-WEB_DIR=/srv/http/www
+WEB_DIR=/srv/http
 
 
 go install
 cp config.ini ../../../../bin/config.ini
-cp web $WEB_DIR -R
+cp www $WEB_DIR -R
+ln manifest $WEB_DIR/www/manifest.json

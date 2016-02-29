@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -69,7 +68,7 @@ func loadManifest(file *os.File) manifestType {
 
 func checkBans(currentBans *map[string]time.Time) {
 	for ip, expiry := range *currentBans {
-		if time.Now().Before(expiry) {
+		if time.Now().After(expiry) {
 			dropBan(ip)
 			delete(*currentBans, ip)
 		}
@@ -112,7 +111,7 @@ func checkEvents(bans map[string]time.Time, events map[string][]time.Time) {
 	for ip := range events {
 		for idx := 0; idx < len(events[ip]); idx++ {
 
-			if now.Sub(events[ip][idx]) > time.Hour { // more than a minute has passed.
+			if now.Sub(events[ip][idx]) > (time.Minute * time.Duration(configure.MustInt("auth", "trace_time", 1))) { // more than a minute has passed.
 				events[ip] = append(events[ip][:idx], events[ip][idx+1:]...)
 				idx--
 			}
@@ -131,8 +130,6 @@ func dropBan(ip string) {
 
 func addBan(ip string, bans map[string]time.Time) {
 	_, ok := bans[ip]
-	fmt.Println(bans)
-	fmt.Println(ok)
 	if !ok {
 		for _, chain := range []string{"INPUT", "OUTPUT", "FORWARD"} {
 			exec.Command("iptables", "-A", chain, "-s", ip, "-j", "DROP").Run()
@@ -154,7 +151,6 @@ func getIPfromString(log string) string {
 
 func getTimeFromString(log string) time.Time {
 	t, _ := time.Parse("Jan 02 15:04:05", getTimeStringFromString(log))
-	fmt.Println(t)
 
 	return t
 }

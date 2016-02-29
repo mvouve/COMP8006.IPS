@@ -1,0 +1,5 @@
+AuthUserFile /srv/http/www/pass/.htpasswd
+AuthGroupFile /dev/null
+AuthName "IPS Monitor"
+AuthType Basic
+require valid-user

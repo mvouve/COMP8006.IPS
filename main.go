@@ -168,6 +168,7 @@ func save(f string, m manifestType) {
 		log.Fatalln(err)
 	}
 	file, _ := os.Create(f)
+	defer file.Close()
 
 	var out bytes.Buffer
 	json.Indent(&out, data, "", "\t")

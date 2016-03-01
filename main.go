@@ -15,7 +15,8 @@ import (
 )
 
 const configIni string = "/root/Music/COMP8006.IPS/config.ini"
-const defaultTrys int = 5
+const defaultTrys int = 5 // default ammount of tries allowed (overridden by config)
+const defaultBan int = 24 // time in hours for default ban (overriden by config)
 
 var configure *goconfig.ConfigFile
 
@@ -135,7 +136,7 @@ func addBan(ip string, bans map[string]time.Time) {
 			exec.Command("iptables", "-A", chain, "-s", ip, "-j", "DROP").Run()
 		}
 	}
-	bans[ip] = time.Now().Add(time.Hour * 24)
+	bans[ip] = time.Now().Add(time.Hour * time.Duration(configure.MustInt("auth", "ban_time", defaultBan)))
 }
 
 func isFailedLogin(log string) bool {

@@ -14,7 +14,7 @@ import (
 	"github.com/Unknwon/goconfig"
 )
 
-const configIni string = "config.ini"
+const configIni string = "/root/Music/COMP8006.IPS/config.ini"
 const defaultTrys int = 5
 
 var configure *goconfig.ConfigFile
@@ -106,7 +106,7 @@ func checkSecure(filePos *int64, events map[string][]time.Time) {
 
 }
 
-func checkEvents(bans map[string]time.Time, events map[string][]time.Time) {
+func checkEvents(bans map[string]time.Time, masterEvents map[string][]time.Time) {
 	now, _ := time.Parse("Jan 02 15:04:05", time.Now().Format("Jan 02 15:04:05"))
 	for ip := range events {
 		for idx := 0; idx < len(events[ip]); idx++ {

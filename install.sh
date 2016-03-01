@@ -1,7 +1,7 @@
-WEB_DIR=/srv/http
+WEB_DIR=/var/www
 
 
-go install
-cp config.ini ../../../../bin/config.ini
-cp www $WEB_DIR -R
-ln manifest $WEB_DIR/www/manifest.json
+go build
+#cp config.ini ../../../../bin/config.ini
+cp html $WEB_DIR -R
+ln manifest $WEB_DIR/html/manifest.json

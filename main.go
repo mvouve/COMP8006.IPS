@@ -106,17 +106,17 @@ func checkSecure(filePos *int64, events map[string][]time.Time) {
 
 }
 
-func checkEvents(bans map[string]time.Time, masterEvents map[string][]time.Time) {
+func checkEvents(bans map[string]time.Time, events map[string][]time.Time) {
 	now, _ := time.Parse("Jan 02 15:04:05", time.Now().Format("Jan 02 15:04:05"))
-	for ip := range events {
-		for idx := 0; idx < len(events[ip]); idx++ {
 
-			if now.Sub(events[ip][idx]) > (time.Minute * time.Duration(configure.MustInt("auth", "trace_time", 1))) { // more than a minute has passed.
-				events[ip] = append(events[ip][:idx], events[ip][idx+1:]...)
-				idx--
+	for ip := range events {
+		recentEvents := make([]time.Time, 0, 128)
+		for idx := 0; idx < len(events[ip]); idx++ {
+			if now.Sub(events[ip][idx]) < (time.Minute * time.Duration(configure.MustInt("auth", "trace_time", 1))) { // more than a minute has passed.
+				recentEvents = append(recentEvents[0:], events[ip][idx])
 			}
 		}
-		if len(events[ip]) >= configure.MustInt("auth", "max_attempts", defaultTrys) {
+		if len(recentEvents) >= configure.MustInt("auth", "max_attempts", defaultTrys) {
 			addBan(ip, bans)
 		}
 	}

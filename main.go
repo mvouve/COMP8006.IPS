@@ -14,9 +14,10 @@ import (
 	"github.com/Unknwon/goconfig"
 )
 
-const configIni string = "/root/Music/COMP8006.IPS/config.ini"
+const configIni string = "/root/go/src/github.com/mvouve/COMP8006.IPS/config.ini"
 const defaultTrys int = 5 // default ammount of tries allowed (overridden by config)
 const defaultBan int = 24 // time in hours for default ban (overriden by config)
+const dateFmt string = "Jan _2 15:04:05"
 
 var configure *goconfig.ConfigFile
 
@@ -33,9 +34,11 @@ func main() {
 	configure, err = goconfig.LoadConfigFile(configIni)
 	if os.IsNotExist(err) {
 		log.Fatal("config.ini should be in the same directory as this is run from")
+	} else if err != nil {
+		log.Fatal("error opening config: ", err)
 	}
 
-	filePath := configure.MustValue("manifest", "file", "manifest")
+	filePath := configure.MustValue("manifest", "file", "/root/go/src/github.com/mvouve/COMP8006.IPS/manifest")
 	if manifestFile, err := os.Open(filePath); os.IsNotExist(err) {
 		manifest = initManifest()
 	} else {
@@ -82,7 +85,7 @@ func checkSecure(filePos *int64, events map[string][]time.Time) {
 	if os.IsNotExist(err) {
 		log.Fatalln("secure file not found, if rsyslog is installed check the ini")
 	} else if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error opening secure file: ", err)
 	}
 	defer logFile.Close()
 
@@ -102,13 +105,14 @@ func checkSecure(filePos *int64, events map[string][]time.Time) {
 				events[getIPfromString(line)] = make([]time.Time, 0, 1024)
 			}
 			events[getIPfromString(line)] = append(events[getIPfromString(line)][0:], getTimeFromString(line))
+			log.Println(events)
 		}
 	}
 
 }
 
 func checkEvents(bans map[string]time.Time, events map[string][]time.Time) {
-	now, _ := time.Parse("Jan 02 15:04:05", time.Now().Format("Jan 02 15:04:05"))
+	now, _ := time.Parse(dateFmt, time.Now().Format(dateFmt))
 
 	for ip := range events {
 		recentEvents := make([]time.Time, 0, 128)
@@ -151,13 +155,13 @@ func getIPfromString(log string) string {
 }
 
 func getTimeFromString(log string) time.Time {
-	t, _ := time.Parse("Jan 02 15:04:05", getTimeStringFromString(log))
+	t, _ := time.Parse(dateFmt, getTimeStringFromString(log))
 
 	return t
 }
 
 func getTimeStringFromString(line string) string {
-	regx := regexp.MustCompile(`[A-Za-z]{3}\s\d{1,2}\s\d{2}:\d{2}:\d{2}`)
+	regx := regexp.MustCompile(`[A-Za-z]{3}\s+\d{1,2}\s\d{2}:\d{2}:\d{2}`)
 
 	return regx.FindString(line)
 }
@@ -165,7 +169,7 @@ func getTimeStringFromString(line string) string {
 func save(f string, m manifestType) {
 	data, err := json.Marshal(m)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error mashaling JSON: ", err)
 	}
 	file, _ := os.Create(f)
 	defer file.Close()

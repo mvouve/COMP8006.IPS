@@ -11,8 +11,8 @@
 --
 --
 -- INTERFACE:
---	func checkEvents(bans map[string]time.Time, events map[string][]time.Time)
---  func addBan(ip string, bans map[string]time.Time)
+--	func (m *manifestType) checkEvents()
+--  func (m *manifestType) addBan(ip string)
 --
 -- NOTES: This file was moved out of main.go
 ------------------------------------------------------------------------------*/
@@ -34,8 +34,8 @@ import (
 --
 -- PROGRAMMER:	Marc Vouve
 --
--- INTERFACE:		func checkBans(currentBans map[string]time.Time)
--- currentBan
+-- INTERFACE:		func (m *manifestType) checkEvents()
+--
 --
 -- RETURNS: 		void
 --
@@ -59,6 +59,24 @@ func (m *manifestType) checkEvents() {
 	}
 }
 
+/*-----------------------------------------------------------------------------
+-- FUNCTION:    addBan
+--
+-- DATE:        February 25, 2016
+--
+-- REVISIONS:	  (none)
+--
+-- DESIGNER:		Marc Vouve
+--
+-- PROGRAMMER:	Marc Vouve
+--
+-- INTERFACE:		func (m *manifestType) addBan(ip string)
+-- 				ip: 	IP to add to netfilter and m's ban list.
+--
+-- RETURNS: 		void
+--
+-- NOTES:			This function adds a ip to the ban tracker and netfilter
+------------------------------------------------------------------------------*/
 func (m *manifestType) addBan(ip string) {
 	_, ok := m.Bans[ip]
 	if !ok {

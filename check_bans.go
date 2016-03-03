@@ -11,7 +11,7 @@
 --
 --
 -- INTERFACE:
---	func checkBans(currentBans *map[string]time.Time)
+--	func (m *manifestType) checkBans()
 --  func dropBan(ip string)
 --
 -- NOTES: This file was moved out of main.go
@@ -34,7 +34,7 @@ import (
 --
 -- PROGRAMMER:	Marc Vouve
 --
--- INTERFACE:		func checkBans(currentBans map[string]time.Time)
+-- INTERFACE:		func (m *manifestType) checkBans()
 -- currentBan
 --
 -- RETURNS: 		void

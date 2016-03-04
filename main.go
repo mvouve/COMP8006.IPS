@@ -50,7 +50,17 @@ func main() {
 	configure, err = goconfig.LoadConfigFile(configIni)
 	fileError(configIni, err)
 
+
+
+}
+
+func daemonMode() {
+	if watcher, err := inotify.NewWatcher();
+}
+
+func cronMode() {
 	filePath := configure.MustValue("manifest", "file", "/root/go/src/github.com/mvouve/COMP8006.IPS/manifest")
+
 	if manifestFile, err := os.Open(filePath); os.IsNotExist(err) {
 		ips = initManifest()
 	} else {

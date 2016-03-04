@@ -54,6 +54,12 @@ func fileError(str string, err error) {
 	}
 }
 
+func ferror(str string, err error) {
+	if err != nil {
+		log.Fatalln("error at %v: %v", str, err)
+	}
+}
+
 /*-----------------------------------------------------------------------------
 -- FUNCTION:    getIPfromString
 --
